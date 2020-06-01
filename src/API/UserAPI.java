@@ -40,65 +40,51 @@ public class UserAPI extends HttpServlet {
          */
 
         // 获取数据
-        XssHttpServletRequestWrapper XssRequest = (XssHttpServletRequestWrapper)request;
+        XssHttpServletRequestWrapper XssRequest = (XssHttpServletRequestWrapper) request;
         XssJSONObject bodyParams = XssRequest.postParams(new BufferedReader(new InputStreamReader(request.getInputStream())));
 
         Object temId = bodyParams.get("id");
         Object temPassword = bodyParams.get("password");
         Object temName = bodyParams.get("name");
-        // 判断参数进行业务逻辑处理
-        JSONObject res = new JSONObject();
-        if (temId == null || temPassword == null) {
-            res.put("errcode", 1);
-            res.put("message", "参数错误");
-        } else {
-            String id = temId.toString();
-            String password = temPassword.toString();
-            if (temName != null) {
-                // 构造对象
-                String name = temName.toString();
-                User user = new User(id, password, name);
-
-                try {
+        Rest rest = new Rest();
+        try {
+            // 判断参数进行业务逻辑处理
+            if (temId == null || temPassword == null) {
+                rest.toRestMessage(1, "参数错误");
+            } else {
+                String id = temId.toString();
+                String password = temPassword.toString();
+                if (temName != null) {
+                    // 构造对象
+                    String name = temName.toString();
+                    User user = new User(id, password, name);
                     // 调用register方法，若添加成功则返回true
                     boolean flag = UserService.getDAOInstance().register(user);
                     // 反馈给用户处理结果
                     if (flag == true) {
-                        res.put("errcode", 0);
-                        res.put("message", "注册成功");
-                        res.put("data", user);
+                        rest.toRestObject(0, user, "注册成功");
                     } else {
-                        res.put("errcode", 1);
-                        res.put("message", "注册失败");
+                        rest.toRestMessage(1, "注册失败");
                     }
-                } catch (Exception e) {
-                    res.put("errcode", 1);
-                    res.put("message", e.getMessage());
-                }
-            } else {
-                // 构造对象
-                User user = new User(id, password, null);
+                } else {
+                    // 构造对象
+                    User user = new User(id, password, null);
 
-                try {
                     // 调用addUser方法，若添加成功则返回true
                     boolean flag = UserService.getDAOInstance().login(user);
                     // 反馈给用户处理结果
                     if (flag == true) {
-                        res.put("errcode", 0);
-                        res.put("message", "登录成功");
                         user = UserService.getDAOInstance().getUsersByIdWithoutPS(user.getId());
-                        res.put("data", user);
+                        rest.toRestObject(0, user, "登陆成功");
                     } else {
-                        res.put("errcode", 1);
-                        res.put("message", "登录失败");
+                        rest.toRestMessage(0, "登陆失败");
                     }
-                } catch (Exception e) {
-                    res.put("errcode", 1);
-                    res.put("message", e.getMessage());
                 }
             }
+        } catch (Exception e) {
+            rest.toRestMessage(1, e.getMessage());
         }
-        response.getWriter().write(res.toJSONString());
+        response.getWriter().write(rest.toJSONString());
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -114,34 +100,27 @@ public class UserAPI extends HttpServlet {
         // 获取数据
         String id = request.getParameter("id");
         // 判断参数进行业务逻辑处理
-        JSONObject jsonObject = new JSONObject();
+        Rest rest = new Rest();
         try {
             if (id == null || id.isEmpty()) {
                 List<User> users = UserService.getDAOInstance().getUsers();
                 if (users != null) {
-                    jsonObject.put("errcode", 0);
-                    jsonObject.put("message", "遍历成功");
-                    jsonObject.put("data", users);
+                    rest.toRestArray(0, users, "遍历成功");
                 } else {
-                    jsonObject.put("errcode", 1);
-                    jsonObject.put("message", "无用户信息");
+                    rest.toRestMessage(1, "无用户信息");
                 }
             } else {
                 User user = UserService.getDAOInstance().getUsersByIdWithoutPS(id);
                 if (user != null) {
-                    jsonObject.put("errcode", 0);
-                    jsonObject.put("message", "查询成功");
-                    jsonObject.put("data", user);
+                    rest.toRestObject(0, user, "查询成功");
                 } else {
-                    jsonObject.put("errcode", 1);
-                    jsonObject.put("message", "无该用户信息");
+                    rest.toRestMessage(1, "无该用户信息");
                 }
             }
         } catch (Exception e) {
-            jsonObject.put("errcode", 1);
-            jsonObject.put("message", e.getMessage());
+            rest.toRestMessage(1, e.getMessage());
         }
-        response.getWriter().write(jsonObject.toJSONString());
+        response.getWriter().write(rest.toJSONString());
     }
 
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
@@ -157,28 +136,22 @@ public class UserAPI extends HttpServlet {
         // 获取数据
         String id = request.getParameter("id");
 
-        JSONObject jsonObject = new JSONObject();
+        Rest rest = new Rest();
         if (id == null || id.isEmpty()) {
-            jsonObject.put("errcode", 1);
-            jsonObject.put("message", "参数错误");
+            rest.toRestMessage(1, "参数错误");
         } else {
             try {
-                Result res = null;
                 boolean flag = UserService.getDAOInstance().removeUserById(id);
                 if (flag == true) {
-                    jsonObject.put("errcode", 0);
-                    jsonObject.put("message", "注销成功");
+                    rest.toRestMessage(0, "注销成功");
                 } else {
-                    jsonObject.put("errcode", 1);
-                    jsonObject.put("message", "注销失败");
+                    rest.toRestMessage(1, "注销失败");
                 }
             } catch (Exception e) {
-                JSONObject res = new JSONObject();
-                res.put("errcode", 1);
-                res.put("message", e.getMessage());
+                rest.toRestMessage(1, e.getMessage());
             }
         }
-        response.getWriter().write(jsonObject.toJSONString());
+        response.getWriter().write(rest.toJSONString());
     }
 
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
@@ -207,37 +180,31 @@ public class UserAPI extends HttpServlet {
         Object temPassword = bodyParams.get("password");
         Object temName = bodyParams.get("name");
 
-        JSONObject jsonObject = new JSONObject();
-        if (temId == null || temPassword == null || temName == null) {
-            jsonObject.put("errcode", 1);
-            jsonObject.put("message", "参数错误");
-        } else {
-            String id = temId.toString();
-            String password = temPassword.toString();
-            String name = temName.toString();
+        Rest rest = new Rest();
+        try {
+            if (temId == null || temPassword == null || temName == null) {
+                rest.toRestMessage(1, "参数错误");
+            } else {
+                String id = temId.toString();
+                String password = temPassword.toString();
+                String name = temName.toString();
 
-            // 构造对象
-            User user = new User(id, password, name);
+                // 构造对象
+                User user = new User(id, password, name);
 
-            try {
                 // 调用editUser方法，若添加成功则返回true
                 boolean flag = UserService.getDAOInstance().editUser(user);
-                Result res = null;
                 // 反馈给用户处理结果
                 if (flag == true) {
-                    jsonObject.put("errcode", 0);
-                    jsonObject.put("message", "修改信息成功");
-                    jsonObject.put("data", user);
+                    rest.toRestObject(0, user, "修改信息成功");
                 } else {
-                    jsonObject.put("errcode", 1);
-                    jsonObject.put("message", "修改信息失败");
+                    rest.toRestMessage(1, "修改信息失败");
                 }
-            } catch (Exception e) {
-                jsonObject.put("errcode", 1);
-                jsonObject.put("message", e.getMessage());
             }
+        } catch (Exception e) {
+            rest.toRestMessage(1, e.getMessage());
         }
-        response.getWriter().write(jsonObject.toJSONString());
+        response.getWriter().write(rest.toJSONString());
     }
 
 }

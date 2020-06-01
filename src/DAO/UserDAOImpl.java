@@ -30,7 +30,7 @@ public class UserDAOImpl implements UserDAO {
             if (this.pstmt.executeUpdate() > 0) {
                 flag = true;
             } else {
-                System.out.println("添加失败");
+                System.out.println("添加用户失败");
             }
         } catch (SQLException e) {
             throw e;
@@ -49,7 +49,7 @@ public class UserDAOImpl implements UserDAO {
         if (this.pstmt.executeUpdate() > 0) {
             flag = true;
         } else {
-            System.out.println("删除失败");
+            System.out.println("删除用户失败");
         }
         this.pstmt.close();
         return flag;
@@ -70,7 +70,7 @@ public class UserDAOImpl implements UserDAO {
             if (this.pstmt.executeUpdate() > 0) {
                 flag = true;
             } else {
-                System.out.println("修改失败");
+                System.out.println("修改用户失败");
             }
         } catch (SQLException e) {
             throw e;

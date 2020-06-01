@@ -45,7 +45,7 @@ public class ProductLogDAOImpl implements ProductLogDAO {
 
     // 查看某段时间的购买记录
     @Override
-    public List<ProductLog> RetrieveProductLogs(String user_id, String start_time, String end_time) {
+    public List<ProductLog> RetrieveProductLogs(String user_id, String start_time, String end_time) throws Exception {
 
 
         List<ProductLog> productLogs = new ArrayList<ProductLog>();
@@ -58,10 +58,11 @@ public class ProductLogDAOImpl implements ProductLogDAO {
             this.pstmt.setString(1, end_time);
             ResultSet rs = this.pstmt.executeQuery();
             while (rs.next()) {
-                productLog = new ProductLog(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4));
-                productLogs.add(product);
+                productLog = new ProductLog(rs.getInt(5), rs.getString(3), rs.getInt(4), rs.getString(6), rs.getString(7), rs.getString(1), rs.getInt(2));
+                productLogs.add(productLog);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            //e.printStackTrace();
             throw e;
         }
         this.pstmt.close();

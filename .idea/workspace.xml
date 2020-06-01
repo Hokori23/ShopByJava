@@ -6,7 +6,18 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ad1d981-58e4-4b20-9497-237622331e59" name="Default Changelist" comment="" />
+    <list default="true" id="4ad1d981-58e4-4b20-9497-237622331e59" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/FACTORY/ProductFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/SERVICE/ProductLogService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/SERVICE/ProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/API/UserAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/API/UserAPI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DAO/ProductDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DAO/ProductDAOImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DAO/ProductLogDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DAO/ProductLogDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DAO/ProductLogDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DAO/ProductLogDAOImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DAO/UserDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DAO/UserDAOImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/VO/Rest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VO/Rest.java" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -227,7 +238,7 @@
       <workItem from="1590739002218" duration="607000" />
       <workItem from="1590999246447" duration="2432000" />
       <workItem from="1591005434394" duration="24000" />
-      <workItem from="1591005513119" duration="3417000" />
+      <workItem from="1591005513119" duration="10340000" />
     </task>
     <servers />
   </component>

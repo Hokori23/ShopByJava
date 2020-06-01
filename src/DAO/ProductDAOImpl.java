@@ -37,7 +37,7 @@ public class ProductDAOImpl implements ProductDAO {
                 product = new Product(rs.getInt(1), rs.getString(2), rs.getString(3),rs.getInt(4));
                 products.add(product);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw e;
         }
         this.pstmt.close();
