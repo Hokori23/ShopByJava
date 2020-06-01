@@ -6,36 +6,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ad1d981-58e4-4b20-9497-237622331e59" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/JavaProjects_war_exploded.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/API/UserAPI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DAO/ProductDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DAO/ProductDAOImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DAO/ProductLogDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DAO/ProductLogDAOImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DAO/UserDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DAO/UserDAOImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DBConnection/DB.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FACTORY/UserFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FILTER/XssFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FILTER/XssFunction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FILTER/XssHttpServletRequestWrapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FILTER/XssJSONObject.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SERVICE/UserService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/UTILS/Encrypt.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/VO/Product.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/VO/ProductLog.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/VO/Rest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/VO/User.java" afterDir="false" />
-    </list>
+    <list default="true" id="4ad1d981-58e4-4b20-9497-237622331e59" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -256,7 +227,7 @@
       <workItem from="1590739002218" duration="607000" />
       <workItem from="1590999246447" duration="2432000" />
       <workItem from="1591005434394" duration="24000" />
-      <workItem from="1591005513119" duration="3289000" />
+      <workItem from="1591005513119" duration="3417000" />
     </task>
     <servers />
   </component>
