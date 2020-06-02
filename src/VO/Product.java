@@ -5,18 +5,20 @@ public class Product {
     private String name;
     private String description;
     private int price;
+    private String category;
 
-    public Product(int id, String name, String description, int price) throws Exception {
-        if (!checkParam(id, name, description, price)) {
+    public Product(int id, String name, String description, int price, String category) throws Exception {
+        if (!checkParam(id, name, description, price, category)) {
             throw new Exception("参数错误,[id < 5, name < 100, description < 255, price < 100000]");
         }
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
+        this.category = category;
     }
 
-    public boolean checkParam(int id, String name, String description, int price) {
+    public boolean checkParam(int id, String name, String description, int price, String category) {
         boolean flag = true;
         if (Integer.toString(id).length() >= 5 && "0".equals(String.valueOf(id))) {
             flag = false;
@@ -25,6 +27,8 @@ public class Product {
         } else if (description.length() >= 255 && description != null) {
             flag = false;
         } else if (Integer.toString(price).length() >= 5 && "0".equals(String.valueOf(price))) {
+            flag = false;
+        } else if (category.length() >= 100 && category != null) {
             flag = false;
         }
         return flag;
@@ -60,5 +64,13 @@ public class Product {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

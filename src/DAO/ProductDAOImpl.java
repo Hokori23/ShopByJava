@@ -34,7 +34,34 @@ public class ProductDAOImpl implements ProductDAO {
             this.pstmt.setInt(2, endLine);
             ResultSet rs = this.pstmt.executeQuery();
             while (rs.next()) {
-                product = new Product(rs.getInt(1), rs.getString(2), rs.getString(3),rs.getInt(4));
+                product = new Product(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5));
+                products.add(product);
+            }
+        } catch (Exception e) {
+            throw e;
+        }
+        this.pstmt.close();
+        return products;
+    }
+
+    @Override
+    public List<Product> getProductsByCategory(int page, int opacity, String category) throws Exception {
+
+
+        int startLine = (page - 1) * opacity;
+        int endLine = startLine + opacity;
+
+        List<Product> products = new ArrayList<Product>();
+        Product product = null;
+        String sql = "SELECT * FROM product LIMIT ? ,? WHERE category = ?";
+        try {
+            this.pstmt = this.conn.prepareStatement(sql);
+            this.pstmt.setInt(1, startLine);
+            this.pstmt.setInt(2, endLine);
+            this.pstmt.setString(3, category);
+            ResultSet rs = this.pstmt.executeQuery();
+            while (rs.next()) {
+                product = new Product(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5));
                 products.add(product);
             }
         } catch (Exception e) {

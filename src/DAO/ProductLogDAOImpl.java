@@ -58,7 +58,7 @@ public class ProductLogDAOImpl implements ProductLogDAO {
             this.pstmt.setString(1, end_time);
             ResultSet rs = this.pstmt.executeQuery();
             while (rs.next()) {
-                productLog = new ProductLog(rs.getInt(5), rs.getString(3), rs.getInt(4), rs.getString(6), rs.getString(7), rs.getString(1), rs.getInt(2));
+                productLog = new ProductLog(rs.getInt(5), rs.getString(3), rs.getInt(4), rs.getString(6), rs.getString(7), rs.getString(1), rs.getInt(2), rs.getString(8));
                 productLogs.add(productLog);
             }
         } catch (Exception e) {

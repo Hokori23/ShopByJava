@@ -35,4 +35,18 @@ public class ProductService implements ProductDAO {
         }
         return products;
     }
+
+    @Override
+    public List<Product> getProductsByCategory(int page, int opacity, String category) throws Exception {
+
+        List<Product> products = new ArrayList<Product>();
+        try {
+            products = this.dao.getProductsByCategory(page, opacity, category);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.conn.close();
+        }
+        return products;
+    }
 }

@@ -8,9 +8,10 @@ public class ProductLog {
     private String user_name;
     private String time;
     private int count;
+    private String category;
 
-    public ProductLog(int product_id, String product_name, int price, String user_id, String user_name, String time, int count) throws Exception {
-        if (!checkParam(product_id, product_name, price, user_id, user_name, time, count)) {
+    public ProductLog(int product_id, String product_name, int price, String user_id, String user_name, String time, int count, String category) throws Exception {
+        if (!checkParam(product_id, product_name, price, user_id, user_name, time, count, category)) {
             throw new Exception("参数错误,[product_id < 5, product_name < 100, price < 100000, user_id < 25, user_name < 15, time<255, count < 100000]");
         }
         this.product_id = product_id;
@@ -20,9 +21,10 @@ public class ProductLog {
         this.user_name = user_name;
         this.time = time;
         this.count = count;
+        this.category = category;
     }
 
-    public boolean checkParam(int product_id, String product_name, int price, String user_id, String user_name, String time, int count) {
+    public boolean checkParam(int product_id, String product_name, int price, String user_id, String user_name, String time, int count, String category) {
         boolean flag = true;
         if (Integer.toString(product_id).length() >= 5 && "0".equals(String.valueOf(product_id))) {
             flag = false;
@@ -37,6 +39,8 @@ public class ProductLog {
         } else if (time.length() >= 255 && time != null) {
             flag = false;
         } else if (Integer.toString(count).length() >= 5 && "0".equals(String.valueOf(count))) {
+            flag = false;
+        } else if (category.length() >= 100 && category != null) {
             flag = false;
         }
         return flag;
@@ -111,5 +115,13 @@ public class ProductLog {
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

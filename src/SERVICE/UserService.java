@@ -7,6 +7,7 @@ import VO.User;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import UTILS.Encrypt;
 
 public class UserService {
 
@@ -110,6 +111,9 @@ public class UserService {
 
     // 登录
     public boolean login(User user) throws Exception {
+        //加密
+        user.setPassword(Encrypt.hash(user.getPassword(),"SHA1"));
+
         User queryUser = null;
         try {
             queryUser = this.getUserById(user.getId());
@@ -129,6 +133,9 @@ public class UserService {
 
     // 注册
     public boolean register(User user) throws Exception {
+        //加密
+        user.setPassword(Encrypt.hash(user.getPassword(),"SHA1"));
+
         User queryUser = null;
         try {
             queryUser = this.dao.getUsersByIdWithoutPS(user.getId());
