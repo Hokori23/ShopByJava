@@ -3,5 +3,5 @@
 /apache-tomcat-9.0.30
 /backup
 /out
-/web
+/web/WEB-INF/classes
 /JavaProjects.iml
