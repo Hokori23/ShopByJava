@@ -124,7 +124,7 @@ export default {
     };
   },
   methods: {
-    login() {
+    async login() {
       let flag = true;
       if (!this.info.account) {
         this.text.account = this.$t("login.accountErr");
@@ -139,48 +139,27 @@ export default {
       if (flag) {
         //Login.vue
         //登录请求
-        this.$axios
-          .post("/user", {
-            id: this.info.account,
-            password: this.info.password
-          })
-          .then(res => {
-            console.log(res);
-            if (res.data.errcode) {
-              //丢出来自后端的错误信息
-              this.$q.dialog({
-                message: res.data.message
-              });
-            } else {
-              sessionStorage.setItem("login", "1");
-              sessionStorage.setItem("name", res.data.data.name);
-              sessionStorage.setItem("id", res.data.data.id);
-              //路由跳转
-              this.$router.push("/");
-            }
-          })
-          .catch(e => {
-            this.$q.dialog({
-              message: e.message
-            });
-          });
+        let res = await this.$request.userLogin(
+          this.info.account,
+          this.info.password
+        );
+        if (!res.errcode) {
+          console.log(res);
+          this.$router.push("/");
+        } else {
+          console.log(res.message);
+        }
       }
     },
     clear(value) {
       this.valid[value] = true;
     },
     toChinese() {
-      // if(this.lang !== "zh-hans"){
-      //   this.lang = "zh-hans"
-      // }
       if (this.$i18n.locale !== "zh-cn") {
         this.$i18n.locale = "zh-cn";
       }
     },
     toEnglish() {
-      // if(this.lang !=='en-us'){
-      //   this.lang = 'en-us';
-      // }
       if (this.$i18n.locale !== "en-us") {
         this.$i18n.locale = "en-us";
       }
@@ -191,17 +170,6 @@ export default {
       vm.$emit("header", false);
     });
   },
-  // watch: {
-  //   lang(lang) {
-  //     // dynamic import, so loading on demand only
-  //     import(
-  //       /* webpackInclude: /(de|en-us)\.js$/ */
-  //       `quasar/lang/${lang}`
-  //     ).then(lang => {
-  //       this.$q.lang.set(lang.default);
-  //     });
-  //   }
-  // },
   mounted() {
     (function(vm) {
       setTimeout(() => {

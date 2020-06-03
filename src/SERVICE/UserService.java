@@ -160,8 +160,8 @@ public class UserService {
                 return false;
             }
             if (user.getPassword().equals(queryUser.getPassword())) {
-                user.setPassword("");
-                rest.toRestObject(0, user, "登陆成功");
+                queryUser.setPassword("");
+                rest.toRestObject(0, queryUser, "登陆成功");
                 return true;
             } else {
                 rest.toRestMessage(3, "密码错误");

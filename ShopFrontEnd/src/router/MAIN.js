@@ -3,14 +3,8 @@ export default {
     component: () =>
         import ("layouts/MainLayout.vue"),
     children: [{
-            path: "",
-            component: () =>
-                import ("pages/MAIN/Home.vue")
-        },
-        {
-            path: "comment",
-            component: () =>
-                import ("pages/MAIN/Comment.vue")
-        }
-    ]
+        path: "",
+        component: () =>
+            import ("pages/MAIN/Home.vue")
+    }, ]
 };

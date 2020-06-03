@@ -1,10 +1,10 @@
 package API;
 
-import FACTORY.ProductFactory;
 import FACTORY.ProductLogFactory;
 import FILTER.XssHttpServletRequestWrapper;
 import FILTER.XssJSONObject;
-import VO.Product;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import VO.ProductLog;
 import VO.Rest;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.JSONObject;
 
 @WebServlet("/productlog")
 public class ProductLogAPI extends HttpServlet {
@@ -47,16 +47,22 @@ public class ProductLogAPI extends HttpServlet {
         try {
             // 判断参数进行业务逻辑处理
             if (temProducts == null) {
-                rest.toRestMessage(1, "参数错误, {products}");
+                rest.toRestMessage(1, "参数错误, {products:Array}");
             } else if (userID == null) {
                 rest.toRestMessage(401, "请登录, Unauthorized");
             } else {
-                Rest productsJSONObject = (Rest) Rest.parseObject((String) temProducts);
-                String productsJSONStr = Rest.toJSONString(productsJSONObject, SerializerFeature.WriteClassName);
-                List<ProductLog> products = Rest.parseArray(productsJSONStr, ProductLog.class);
+//                String ProductsJSON = JSONObject.toJSONString(temProducts);
+                String ProductsJSON = temProducts.toString();
+                System.out.println(ProductsJSON);
+                ProductsJSON = ProductsJSON.replace("&quot;","\"");
+                System.out.println(ProductsJSON);
+                ObjectMapper mapper = new ObjectMapper();
+                List<ProductLog> productLogs = mapper.readValue(ProductsJSON,  new TypeReference<List<ProductLog>>(){});
+
+
 
                 AtomicBoolean flag = new AtomicBoolean(true);
-                products.forEach(item -> {
+                productLogs.forEach(item -> {
                     try {
                         item.setUser_id(userID);
                         ProductLogFactory.getDAOInstance().createProductLog(item);
@@ -102,7 +108,7 @@ public class ProductLogAPI extends HttpServlet {
                 rest.toRestMessage(401, "请登录, Unauthorized");
             } else {
                 List<ProductLog> productLogs = ProductLogFactory.getDAOInstance().RetrieveProductLogs(userID, startTime, endTime);
-                rest.toRestArray(0,productLogs,"查询购买记录成功");
+                rest.toRestArray(0, productLogs, "查询购买记录成功");
             }
         } catch (Exception e) {
             rest.toRestMessage(1, e.getMessage());

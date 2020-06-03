@@ -35,7 +35,7 @@ public class CountAPI extends HttpServlet {
         count++;
         context.setAttribute("count", count);
 
-        rest.toRestInt(0, count, "添加网站访问人数成功");
+        rest.toRestInt(0, count, "添加网站访问次数成功");
 
         response.getWriter().write(rest.toJSONString());
 

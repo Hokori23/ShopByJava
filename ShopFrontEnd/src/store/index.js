@@ -2,7 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import LoginLayout from './LoginLayout'
-
+import MainLayout from './MainLayout'
+import Common from './Common'
 Vue.use(Vuex)
 
 /*
@@ -17,7 +18,9 @@ Vue.use(Vuex)
 export default function( /* { ssrContext } */ ) {
     const Store = new Vuex.Store({
         modules: {
-            LoginLayout
+            LoginLayout,
+            MainLayout,
+            Common
         },
 
         // enable strict mode (adds overhead!)

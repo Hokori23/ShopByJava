@@ -1,6 +1,8 @@
 package VO;
 
-public class ProductLog {
+import java.io.Serializable;
+
+public class ProductLog implements Serializable {
     private int product_id;
     private String product_name;
     private int price;
@@ -9,7 +11,7 @@ public class ProductLog {
     private String time;
     private int count;
     private String category;
-
+    public ProductLog(){}
     public ProductLog(int product_id, String product_name, int price, String user_id, String user_name, String time, int count, String category) throws Exception {
         if (!checkParam(product_id, product_name, price, user_id, user_name, time, count, category)) {
             throw new Exception("参数错误,[product_id < 5, product_name < 100, price < 100000, user_id < 25, user_name < 15, time<255, count < 100000]");
@@ -28,37 +30,22 @@ public class ProductLog {
         boolean flag = true;
         if (Integer.toString(product_id).length() >= 5 && "0".equals(String.valueOf(product_id))) {
             flag = false;
-        } else if (product_name.length() >= 100 && product_name != null) {
+        } else if (product_name != null && product_name.length() >= 100) {
             flag = false;
-        } else if (Integer.toString(price).length() >= 5 && "0".equals(String.valueOf(price))) {
+        } else if ("0".equals(String.valueOf(price)) && Integer.toString(price).length() >= 5) {
             flag = false;
-        } else if (user_id.length() >= 25 && user_id != null) {
+        } else if (user_id != null && user_id.length() >= 25) {
             flag = false;
-        } else if (user_name.length() >= 15 && user_name != null) {
+        } else if (user_name != null && user_name.length() >= 15) {
             flag = false;
-        } else if (time.length() >= 255 && time != null) {
+        } else if (time != null && time.length() >= 255) {
             flag = false;
-        } else if (Integer.toString(count).length() >= 5 && "0".equals(String.valueOf(count))) {
+        } else if ("0".equals(String.valueOf(count)) && Integer.toString(count).length() >= 5) {
             flag = false;
-        } else if (category.length() >= 100 && category != null) {
+        } else if (category != null && category.length() >= 100) {
             flag = false;
         }
         return flag;
-    }
-
-    public static boolean checkRequestParam(String user_id, String start_time, String end_time) {
-        boolean flag = true;
-        if (user_id == null || start_time == null || end_time == null) {
-            return false;
-        }
-        if (user_id.length() >= 5) {
-            flag = false;
-        } else if (start_time.length() >= 255) {
-            flag = false;
-        } else if (end_time.length() >= 255) {
-            flag = false;
-        }
-        return true;
     }
 
     public int getProduct_id() {
