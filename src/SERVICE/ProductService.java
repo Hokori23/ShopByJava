@@ -100,16 +100,8 @@ public class ProductService {
     public List<Product> getProducts(int page, int opacity, String operaterID, Rest rest) throws Exception {
         List<Product> products = new ArrayList<Product>();
         try {
-            if (checkRole(operaterID, rest)) {
-                products = this.dao.getProducts(page, opacity);
-                if (products != null) {
-                    rest.toRestArray(0, products, "遍历成功");
-                } else {
-                    rest.toRestMessage(1, "无商品信息");
-                }
-            } else {
-                products = null;
-            }
+            products = this.dao.getProducts(page, opacity);
+            rest.toRestArray(0, products, "遍历成功");
         } catch (Exception e) {
             throw e;
         } finally {
@@ -118,15 +110,12 @@ public class ProductService {
         return products;
     }
 
-    public List<Product> getProductsByCategory(int page, int opacity, String category, String operaterID,Rest rest) throws Exception {
+    public List<Product> getProductsByCategory(int page, int opacity, String category, String operaterID, Rest rest) throws Exception {
 
         List<Product> products = new ArrayList<Product>();
         try {
-            if (checkRole(operaterID, rest)) {
-                products = this.dao.getProductsByCategory(page, opacity, category);
-            } else {
-                products = null;
-            }
+            products = this.dao.getProductsByCategory(page, opacity, category);
+            rest.toRestArray(0, products, "遍历成功");
         } catch (Exception e) {
             throw e;
         } finally {

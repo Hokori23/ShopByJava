@@ -20,4 +20,6 @@ public interface ProductDAO {
     //查看某一分类某一页的商品信息
     public List<Product> getProductsByCategory(int page, int capacity, String category) throws Exception;
 
+    //获取最后一个商品ID
+    public int getLastID() throws Exception;
 }

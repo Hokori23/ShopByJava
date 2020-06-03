@@ -35,6 +35,7 @@ public class ProductDAOImpl implements ProductDAO {
 
             if (this.pstmt.executeUpdate() > 0) {
                 obj = product;
+                obj.setId(getLastID());
             } else {
                 System.out.println("添加商品失败");
             }
@@ -126,12 +127,12 @@ public class ProductDAOImpl implements ProductDAO {
 
         List<Product> products = new ArrayList<Product>();
         Product product = null;
-        String sql = "SELECT * FROM product LIMIT ? ,? WHERE category = ?";
+        String sql = "SELECT * FROM product WHERE category = ? LIMIT ? ,?";
         try {
             this.pstmt = this.conn.prepareStatement(sql);
-            this.pstmt.setInt(1, startLine);
-            this.pstmt.setInt(2, endLine);
-            this.pstmt.setString(3, category);
+            this.pstmt.setString(1, category);
+            this.pstmt.setInt(2, startLine);
+            this.pstmt.setInt(3, endLine);
             ResultSet rs = this.pstmt.executeQuery();
             while (rs.next()) {
                 product = new Product(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5));
@@ -142,5 +143,22 @@ public class ProductDAOImpl implements ProductDAO {
         }
         this.pstmt.close();
         return products;
+    }
+
+    @Override
+    public int getLastID() throws SQLException {
+        int id = -1;
+        String sql = "select max(id) from product";
+        try {
+            this.pstmt = this.conn.prepareStatement(sql);
+            ResultSet rs = this.pstmt.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            throw e;
+        }
+        this.pstmt.close();
+        return id;
     }
 }

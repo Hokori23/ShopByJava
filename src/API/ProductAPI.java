@@ -77,7 +77,7 @@ public class ProductAPI extends HttpServlet {
          *
          * @param int page
          * @param int capacity
-         * @param String category
+         * @param String (category)
          *
          */
 

@@ -184,7 +184,9 @@ public class UserService {
             User queryUser = null;
             queryUser = this.dao.getUsersByIdWithoutPS(user.getId());
             if (queryUser != null) {
+                System.out.println("账号已存在");
                 rest.toRestMessage(2, "账号已存在");
+                return false;
             }
 
 
