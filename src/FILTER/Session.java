@@ -20,6 +20,7 @@ public class Session implements Filter {
         HttpSession session = httpRequest.getSession();
         Rest rest = new Rest();
         boolean flag = false;
+        System.out.println("SESSION FILTER http servletPath :"+httpRequest.getServletPath());
         if (httpRequest.getServletPath().equals("/user") && httpRequest.getMethod().equals("POST")) {
             //7天有效期
             session.setMaxInactiveInterval(60 * 60 * 24 * 7);
@@ -27,10 +28,14 @@ public class Session implements Filter {
             try {
                 User user = UserService.getDAOInstance().getUserById((String) session.getAttribute("id"));
                 if (user == null) {
-                    rest.toRestMessage(403, "Forbidden");
+                    //销毁session
+                    session.invalidate();
+                    rest.toRestMessage(401, "请登录, Unauthorized");
                     flag = true;
                 } else {
+                    System.out.println("Session 当前用户ID: "+user.getId());
                     session.setAttribute("id", (Object) user.getId());
+                    session.setMaxInactiveInterval(60 * 60 * 24 * 7);
                 }
             } catch (Exception e) {
                 flag = true;

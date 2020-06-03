@@ -6,20 +6,30 @@
         style="width:30vw;max-width:150px;"
       >
     </p>
-    <p class="text-faded">
-      Sorry, nothing here...<strong>(404)</strong>
-    </p>
+    <div class="text-faded">
+      <p style='font-size: 30px;'>404</p>
+
+      <p>抱歉, 找不到该页面...</p>
+
+      <p>Sorry, nothing here...</p>
+    </div>
     <q-btn
-      color="secondary"
+      color="primary"
       style="width:200px;"
-      to="/"
+      @click='goBack'
       label="Go back"
     />
   </div>
 </template>
 
-<script >
+<script>
 export default {
-  name: 'Error404'
+  name: 'Error404',
+  methods:{
+    goBack(){
+      this.$router.go(-1);
+      console.log('back')
+    }
+  }
 }
 </script>

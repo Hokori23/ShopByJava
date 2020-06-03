@@ -1,15 +1,16 @@
 package LISTENER;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import javax.servlet.*;
+import javax.servlet.annotation.WebListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
+@WebListener()
 public class Counter implements ServletContextListener {
 
+    @Override
     public void contextInitialized(ServletContextEvent sce) {
 
 
@@ -21,7 +22,7 @@ public class Counter implements ServletContextListener {
 
             // 从文件中读取计数器的数值
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(context.getResourceAsStream("/count/count.txt")));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(context.getResourceAsStream("/src/counter.txt")));
 
             int count = Integer.parseInt(reader.readLine());
 
@@ -37,6 +38,7 @@ public class Counter implements ServletContextListener {
 
     }
 
+    @Override
     public void contextDestroyed(ServletContextEvent sce) {
 
 
@@ -52,11 +54,11 @@ public class Counter implements ServletContextListener {
 
             try {
 
-                // 把计数器的数值写到 count.txt 文件中
+                // 把计数器的数值写到 counter.txt 文件中
 
-                String filepath = context.getRealPath("/count");
+                String filepath = context.getRealPath("/src");
 
-                filepath = filepath + "/count.txt";
+                filepath = filepath + "/counter.txt";
 
                 PrintWriter pw = new PrintWriter(filepath);
 

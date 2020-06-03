@@ -3,10 +3,13 @@ package SERVICE;
 import DAO.UserDAO;
 import DAO.UserDAOImpl;
 import DBConnection.DB;
+import VO.Rest;
 import VO.User;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import UTILS.Encrypt;
 
 public class UserService {
@@ -27,7 +30,7 @@ public class UserService {
     }
 
     // 增
-    public boolean addUser(User user) throws Exception {
+    public boolean addUser(User user, Rest rest) throws Exception {
         boolean flag = false;
         try {
             flag = this.dao.addUser(user);
@@ -40,10 +43,25 @@ public class UserService {
     }
 
     // 删
-    public boolean removeUserById(String id) throws Exception {
+    public boolean removeUser(String id, String password, Rest rest) throws Exception {
         boolean flag = false;
         try {
-            flag = this.dao.removeUserById(id);
+            //加密
+            password = Encrypt.hash(password, "SHA1");
+            User user = this.getUserById(id);
+            if (user == null) {
+                rest.toRestMessage(2, "账号不存在");
+            }
+            if (user.getPassword().equals(password)) {
+                flag = this.dao.removeUserById(id);
+                if (flag) {
+                    rest.toRestMessage(0, "注销成功");
+                } else {
+                    rest.toRestMessage(3, "注销失败（数据库操作错误）");
+                }
+            } else {
+                rest.toRestMessage(4, "密码错误");
+            }
         } catch (Exception e) {
             throw e;
         } finally {
@@ -53,12 +71,33 @@ public class UserService {
     }
 
     // 改
-    public boolean editUser(User user) throws Exception {
+    public boolean editUser(User user, String oldPassword, Rest rest) throws Exception {
         boolean flag = false;
         try {
             // 若存在则更新
-            if (this.dao.getUserById(user.getId()) != null) {
-                flag = this.dao.editUser(user);
+            User queryUser = this.dao.getUserById(user.getId());
+
+
+            if (queryUser != null) {
+                //验证旧密码
+                oldPassword = Encrypt.hash(oldPassword, "SHA1");
+                if (oldPassword.equals(queryUser.getPassword())) {
+                    //加密新密码
+                    user.setPassword(Encrypt.hash(user.getPassword(), "SHA1"));
+                    if (this.dao.editUser(user)) {
+                        user.setPassword("");
+                        flag = true;
+                        rest.toRestObject(0, user, "修改信息成功");
+                    } else {
+                        rest.toRestMessage(2, "修改信息失败（数据库操作失败）");
+                    }
+                } else {
+                    System.out.println("密码错误");
+                    rest.toRestMessage(3, "密码错误");
+                }
+            } else {
+                System.out.println("账号不存在");
+                rest.toRestMessage(4, "账号不存在");
             }
         } catch (Exception e) {
             throw e;
@@ -110,17 +149,22 @@ public class UserService {
     }
 
     // 登录
-    public boolean login(User user) throws Exception {
-        //加密
-        user.setPassword(Encrypt.hash(user.getPassword(),"SHA1"));
-
-        User queryUser = null;
+    public boolean login(User user, Rest rest) throws Exception {
         try {
+            //加密
+            user.setPassword(Encrypt.hash(user.getPassword(), "SHA1"));
+            User queryUser = null;
             queryUser = this.getUserById(user.getId());
-
-            if (queryUser != null && user.getPassword().equals(queryUser.getPassword())) {
+            if (queryUser == null) {
+                rest.toRestMessage(2, "账号不存在");
+                return false;
+            }
+            if (user.getPassword().equals(queryUser.getPassword())) {
+                user.setPassword("");
+                rest.toRestObject(0, user, "登陆成功");
                 return true;
             } else {
+                rest.toRestMessage(3, "密码错误");
                 return false;
             }
         } catch (SQLException e) {
@@ -132,19 +176,27 @@ public class UserService {
     }
 
     // 注册
-    public boolean register(User user) throws Exception {
-        //加密
-        user.setPassword(Encrypt.hash(user.getPassword(),"SHA1"));
-
-        User queryUser = null;
+    public boolean register(User user, Rest rest) throws Exception {
         try {
+            //加密
+            user.setPassword(Encrypt.hash(user.getPassword(), "SHA1"));
+
+            User queryUser = null;
             queryUser = this.dao.getUsersByIdWithoutPS(user.getId());
-            if (queryUser != null && user.getId().equals(queryUser.getId())) {
-                return false;
-            } else {
-                boolean flag = addUser(user);
-                return flag;
+            if (queryUser != null) {
+                rest.toRestMessage(2, "账号已存在");
             }
+
+
+            //默认权限为0
+            user.setRole(0);
+            boolean flag = addUser(user, rest);
+            if (flag) {
+                user.setPassword("");
+                rest.toRestObject(0, user, "注册成功");
+            }
+            return flag;
+
         } catch (SQLException e) {
             throw e;
         } finally {

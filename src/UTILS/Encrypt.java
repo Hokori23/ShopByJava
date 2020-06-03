@@ -1,8 +1,5 @@
 package UTILS;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -15,13 +12,12 @@ public class Encrypt {
      * @param algorithm 算法名
      * @return 字符串的hash值
      */
-    public static String hash(String string, String algorithm) {
+    public static String hash(String string, String algorithm) throws Exception {
         if (string.isEmpty()) {
             return "";
         }
-        MessageDigest hash = null;
         try {
-            hash = MessageDigest.getInstance(algorithm);
+            MessageDigest hash = MessageDigest.getInstance(algorithm);
             byte[] bytes = hash.digest(string.getBytes("UTF-8"));
             String result = "";
             for (byte b : bytes) {
@@ -33,10 +29,9 @@ public class Encrypt {
             }
             return result;
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            throw e;
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            throw e;
         }
-        return "";
     }
 }

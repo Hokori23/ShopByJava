@@ -18,12 +18,85 @@ public class ProductDAOImpl implements ProductDAO {
         this.conn = conn;
     }
 
+    //添加商品
+    @Override
+    public Product createProduct(Product product) throws Exception {
+        Product obj = null;
+
+        String sql = "insert into product (name,description,price,category) values(?,?,?,?)";
+        try {
+
+            this.pstmt = this.conn.prepareStatement(sql);
+            this.pstmt.setString(1, product.getName());
+            this.pstmt.setString(2, product.getDescription());
+            this.pstmt.setInt(3, product.getPrice());
+            this.pstmt.setString(4, product.getCategory());
+
+
+            if (this.pstmt.executeUpdate() > 0) {
+                obj = product;
+            } else {
+                System.out.println("添加商品失败");
+            }
+        } catch (SQLException e) {
+            throw e;
+        }
+        return obj;
+    }
+
+    @Override
+    public boolean deleteProduct(int id) throws Exception {
+        boolean flag = false;
+
+        String sql = "delete from product where id = ?";
+        try {
+
+            this.pstmt = this.conn.prepareStatement(sql);
+            this.pstmt.setInt(1, id);
+
+            if (this.pstmt.executeUpdate() > 0) {
+                flag = true;
+            } else {
+                System.out.println("删除商品失败");
+            }
+        } catch (SQLException e) {
+            throw e;
+        }
+        return flag;
+    }
+
+    @Override
+    public Product updateProduct(Product product) throws Exception {
+        Product obj = null;
+
+        String sql = "update product set name = ?, description = ?, price = ?, category = ? where id = ?";
+        try {
+
+            this.pstmt = this.conn.prepareStatement(sql);
+            this.pstmt.setString(1, product.getName());
+            this.pstmt.setString(2, product.getDescription());
+            this.pstmt.setInt(3, product.getPrice());
+            this.pstmt.setString(4, product.getCategory());
+            this.pstmt.setInt(5, product.getId());
+
+
+            if (this.pstmt.executeUpdate() > 0) {
+                obj = product;
+            } else {
+                System.out.println("添加商品失败");
+            }
+        } catch (SQLException e) {
+            throw e;
+        }
+        return obj;
+    }
+
     // 查看某一页的商品信息
     @Override
-    public List<Product> getProducts(int page, int opacity) throws Exception {
+    public List<Product> getProducts(int page, int capacity) throws Exception {
 
-        int startLine = (page - 1) * opacity;
-        int endLine = startLine + opacity;
+        int startLine = (page - 1) * capacity;
+        int endLine = startLine + capacity;
 
         List<Product> products = new ArrayList<Product>();
         Product product = null;
@@ -45,11 +118,11 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
     @Override
-    public List<Product> getProductsByCategory(int page, int opacity, String category) throws Exception {
+    public List<Product> getProductsByCategory(int page, int capacity, String category) throws Exception {
 
 
-        int startLine = (page - 1) * opacity;
-        int endLine = startLine + opacity;
+        int startLine = (page - 1) * capacity;
+        int endLine = startLine + capacity;
 
         List<Product> products = new ArrayList<Product>();
         Product product = null;

@@ -1,6 +1,8 @@
 package VO;
 
-public class Product {
+import java.io.Serializable;
+
+public class Product implements Serializable {
     private int id;
     private String name;
     private String description;
@@ -20,15 +22,15 @@ public class Product {
 
     public boolean checkParam(int id, String name, String description, int price, String category) {
         boolean flag = true;
-        if (Integer.toString(id).length() >= 5 && "0".equals(String.valueOf(id))) {
+        if ("0".equals(String.valueOf(id)) && Integer.toString(id).length() >= 5) {
             flag = false;
-        } else if (name.length() >= 100 && name != null) {
+        } else if (name != null && name.length() >= 100) {
             flag = false;
-        } else if (description.length() >= 255 && description != null) {
+        } else if (description != null && description.length() >= 255) {
             flag = false;
-        } else if (Integer.toString(price).length() >= 5 && "0".equals(String.valueOf(price))) {
+        } else if ("0".equals(String.valueOf(price)) && Integer.toString(price).length() >= 5) {
             flag = false;
-        } else if (category.length() >= 100 && category != null) {
+        } else if (category != null && category.length() >= 100) {
             flag = false;
         }
         return flag;

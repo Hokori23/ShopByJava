@@ -5,8 +5,8 @@ import messages from 'src/i18n'
 Vue.use(VueI18n)
 
 const i18n = new VueI18n({
-  locale: 'en-us',
-  fallbackLocale: 'en-us',
+  locale: localStorage.getItem('language')||'zh-cn',
+  fallbackLocale: 'zh-cn',
   messages
 })
 

@@ -2,7 +2,7 @@ package API;
 
 import FILTER.XssHttpServletRequestWrapper;
 import FILTER.XssJSONObject;
-import SERVICE.UserService;
+import FACTORY.UserFactory;
 import VO.*;
 
 import javax.servlet.ServletException;
@@ -10,33 +10,26 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import com.alibaba.fastjson.*;
 
 @WebServlet("/user")
 public class UserAPI extends HttpServlet {
-    public void responseFormat(HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "PUT,DELETE,POST,GET");
-        response.setContentType("application/json;charset=UTF-8");
-    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        responseFormat(response);
-        /*
-         * 增/登录
+        /**
+         * 注册/登录
          *
-         * @String id
+         * @param String id
+         * @param String password
+         * @param String (name)
          *
-         * @String password
-         *
-         * [@String name]
          */
 
         // 获取数据
@@ -50,38 +43,38 @@ public class UserAPI extends HttpServlet {
         try {
             // 判断参数进行业务逻辑处理
             if (temId == null || temPassword == null) {
-                rest.toRestMessage(1, "参数错误");
+                rest.toRestMessage(1, "参数错误, {id, password, (name)}");
             } else {
                 String id = temId.toString();
                 String password = temPassword.toString();
                 if (temName != null) {
                     // 构造对象
+                    System.out.println("注册 --- " + id);
                     String name = temName.toString();
-                    User user = new User(id, password, name);
+                    User user = new User(id, password, name, 0);
                     // 调用register方法，若添加成功则返回true
-                    boolean flag = UserService.getDAOInstance().register(user);
+                    boolean flag = UserFactory.getDAOInstance().register(user, rest);
                     // 反馈给用户处理结果
                     if (flag == true) {
-                        rest.toRestObject(0, user, "注册成功");
-                    } else {
-                        rest.toRestMessage(1, "注册失败");
+                        //添加session属性
+                        HttpSession session = request.getSession();
+                        session.setAttribute("id", user.getId());
                     }
                 } else {
+                    System.out.println("登录 --- " + id);
                     // 构造对象
-                    User user = new User(id, password, null);
-
-                    // 调用addUser方法，若添加成功则返回true
-                    boolean flag = UserService.getDAOInstance().login(user);
+                    User user = new User(id, password, "", 0);
+                    boolean flag = UserFactory.getDAOInstance().login(user, rest);
                     // 反馈给用户处理结果
                     if (flag == true) {
-                        user = UserService.getDAOInstance().getUsersByIdWithoutPS(user.getId());
-                        rest.toRestObject(0, user, "登陆成功");
-                    } else {
-                        rest.toRestMessage(0, "登陆失败");
+                        //添加session属性
+                        HttpSession session = request.getSession();
+                        session.setAttribute("id", user.getId());
                     }
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             rest.toRestMessage(1, e.getMessage());
         }
         response.getWriter().write(rest.toJSONString());
@@ -90,11 +83,11 @@ public class UserAPI extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        responseFormat(response);
-        /*
+        /**
          * 查/遍历
          *
-         * [@String id]
+         * @param String (id)
+         *
          */
 
         // 获取数据
@@ -103,19 +96,11 @@ public class UserAPI extends HttpServlet {
         Rest rest = new Rest();
         try {
             if (id == null || id.isEmpty()) {
-                List<User> users = UserService.getDAOInstance().getUsers();
-                if (users != null) {
-                    rest.toRestArray(0, users, "遍历成功");
-                } else {
-                    rest.toRestMessage(1, "无用户信息");
-                }
+                List<User> users = UserFactory.getDAOInstance().getUsers();
+                rest.toRestArray(0, users, "遍历成功");
             } else {
-                User user = UserService.getDAOInstance().getUsersByIdWithoutPS(id);
-                if (user != null) {
-                    rest.toRestObject(0, user, "查询成功");
-                } else {
-                    rest.toRestMessage(1, "无该用户信息");
-                }
+                User user = UserFactory.getDAOInstance().getUsersByIdWithoutPS(id);
+                rest.toRestObject(0, user, "查询成功");
             }
         } catch (Exception e) {
             rest.toRestMessage(1, e.getMessage());
@@ -126,27 +111,21 @@ public class UserAPI extends HttpServlet {
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        responseFormat(response);
-        /*
+        /**
          * 删
-         *
-         * @String id
+         * @param String password
          */
 
         // 获取数据
-        String id = request.getParameter("id");
+        String id = (String) request.getSession().getAttribute("id");
+        String password = request.getParameter("password");
 
         Rest rest = new Rest();
-        if (id == null || id.isEmpty()) {
-            rest.toRestMessage(1, "参数错误");
+        if (password == null || password.isEmpty()) {
+            rest.toRestMessage(1, "密码错误");
         } else {
             try {
-                boolean flag = UserService.getDAOInstance().removeUserById(id);
-                if (flag == true) {
-                    rest.toRestMessage(0, "注销成功");
-                } else {
-                    rest.toRestMessage(1, "注销失败");
-                }
+                UserFactory.getDAOInstance().removeUser(id, password, rest);
             } catch (Exception e) {
                 rest.toRestMessage(1, e.getMessage());
             }
@@ -157,49 +136,37 @@ public class UserAPI extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        responseFormat(response);
-        /*
+        /**
          * 改
          *
-         * @String id
+         * @param String old_password
+         * @param String password
+         * @param String name
          *
-         * @String password
-         *
-         * @String name
          */
 
         // 获取数据
-        BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-        String str = "";
-        String body = "";
-        while ((str = reader.readLine()) != null) {// 一行一行的读取body体里面的内容；
-            body += str;
-        }
-        JSONObject bodyParams = JSONObject.parseObject(body);
-        Object temId = bodyParams.get("id");
+        XssHttpServletRequestWrapper XssRequest = (XssHttpServletRequestWrapper) request;
+        XssJSONObject bodyParams = XssRequest.postParams(new BufferedReader(new InputStreamReader(request.getInputStream())));
+
+        Object temOldPassword = bodyParams.get("old_password");
         Object temPassword = bodyParams.get("password");
         Object temName = bodyParams.get("name");
+        String id = (String) request.getSession().getAttribute("id");
 
         Rest rest = new Rest();
         try {
-            if (temId == null || temPassword == null || temName == null) {
-                rest.toRestMessage(1, "参数错误");
+            if (temOldPassword == null || temPassword == null || temName == null) {
+                rest.toRestMessage(1, "参数错误, {old_password, password, name}");
             } else {
-                String id = temId.toString();
+                String oldPassword = temOldPassword.toString();
                 String password = temPassword.toString();
                 String name = temName.toString();
 
                 // 构造对象
-                User user = new User(id, password, name);
-
+                User user = new User(id, password, name, 0);
                 // 调用editUser方法，若添加成功则返回true
-                boolean flag = UserService.getDAOInstance().editUser(user);
-                // 反馈给用户处理结果
-                if (flag == true) {
-                    rest.toRestObject(0, user, "修改信息成功");
-                } else {
-                    rest.toRestMessage(1, "修改信息失败");
-                }
+                UserFactory.getDAOInstance().editUser(user, oldPassword, rest);
             }
         } catch (Exception e) {
             rest.toRestMessage(1, e.getMessage());

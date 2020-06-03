@@ -20,12 +20,14 @@ public class UserDAOImpl implements UserDAO {
         boolean flag = false;
         // 预编译sql，防止sql注入
 
-        String sql = "insert into user (id,password,name) values(?,?,?)";
+        String sql = "insert into user (id,password,name,role) values(?,?,?,?)";
         try {
             this.pstmt = this.conn.prepareStatement(sql);
             this.pstmt.setString(1, user.getId());
             this.pstmt.setString(2, user.getPassword());
             this.pstmt.setString(3, user.getName());
+            this.pstmt.setInt(4, user.getRole());
+
 
             if (this.pstmt.executeUpdate() > 0) {
                 flag = true;
@@ -90,7 +92,7 @@ public class UserDAOImpl implements UserDAO {
             this.pstmt.setString(1, id);
             ResultSet rs = this.pstmt.executeQuery();
             if (rs.next()) {
-                user = new User(rs.getString(1), rs.getString(2), rs.getString(3));
+                user = new User(rs.getString(1), rs.getString(2), rs.getString(3), rs.getInt(4));
             }
         } catch (SQLException e) {
             throw e;
@@ -103,13 +105,13 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User getUsersByIdWithoutPS(String id) throws Exception {
         User user = null;
-        String sql = "select id,name from user where id = ?";
+        String sql = "select * from user where id = ?";
         try {
             this.pstmt = this.conn.prepareStatement(sql);
             this.pstmt.setString(1, id);
             ResultSet rs = this.pstmt.executeQuery();
             if (rs.next()) {
-                user = new User(rs.getString(1), null, rs.getString(2));
+                user = new User(rs.getString(1), null, rs.getString(3), rs.getInt(4));
             }
         } catch (SQLException e) {
             throw e;
@@ -128,7 +130,7 @@ public class UserDAOImpl implements UserDAO {
             this.pstmt = this.conn.prepareStatement(sql);
             ResultSet rs = this.pstmt.executeQuery();
             while (rs.next()) {
-                user = new User(rs.getString(1), rs.getString(2), rs.getString(3));
+                user = new User(rs.getString(1), "", rs.getString(3), rs.getInt(4));
                 users.add(user);
             }
         } catch (SQLException e) {
