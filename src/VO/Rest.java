@@ -48,7 +48,6 @@ public class Rest extends JSONObject {
         this.setMessage(message);
     }
 
-
     public void toRestObject(int errcode, User obj, String message) {
         this.setErrcode(errcode);
         this.setData(obj);

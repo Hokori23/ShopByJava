@@ -51,29 +51,27 @@ public class ProductLogAPI extends HttpServlet {
             } else if (userID == null) {
                 rest.toRestMessage(401, "请登录, Unauthorized");
             } else {
-//                String ProductsJSON = JSONObject.toJSONString(temProducts);
-                String ProductsJSON = temProducts.toString();
-                System.out.println(ProductsJSON);
-                ProductsJSON = ProductsJSON.replace("&quot;", "\"");
-                System.out.println(ProductsJSON);
-                ObjectMapper mapper = new ObjectMapper();
-                List<ProductLog> productLogs = mapper.readValue(ProductsJSON, new TypeReference<List<ProductLog>>() {
-                });
+
+        String ProductsJSON = temProducts.toString();
+        ProductsJSON = ProductsJSON.replace("&quot;", "\"");
+        System.out.println(ProductsJSON);
+        ObjectMapper mapper = new ObjectMapper();
+        List<ProductLog> productLogs = mapper.readValue(ProductsJSON, new TypeReference<List<ProductLog>>() {});
 
 
-                AtomicBoolean flag = new AtomicBoolean(true);
-                productLogs.forEach(item -> {
-                    try {
-                        item.setUser_id(userID);
-                        ProductLogFactory.getDAOInstance().createProductLog(item);
-                    } catch (Exception e) {
-                        flag.set(false);
-                        rest.toRestMessage(1, e.getMessage());
-                    }
-                });
-                if (flag.get()) {
-                    rest.toRestMessage(0, "购买成功");
-                }
+        AtomicBoolean flag = new AtomicBoolean(true);
+        productLogs.forEach(item -> {
+            try {
+                item.setUser_id(userID);
+                ProductLogFactory.getDAOInstance().createProductLog(item);
+            } catch (Exception e) {
+                flag.set(false);
+                rest.toRestMessage(1, e.getMessage());
+            }
+        });
+        if (flag.get()) {
+            rest.toRestMessage(0, "购买成功");
+        }
             }
         } catch (Exception e) {
             rest.toRestMessage(1, e.getMessage());

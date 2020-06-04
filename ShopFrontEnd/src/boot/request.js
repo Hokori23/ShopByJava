@@ -10,6 +10,7 @@ const request = {
                     password: password
                 })
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -22,6 +23,7 @@ const request = {
             axios
                 .get("/user/logout")
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -38,6 +40,7 @@ const request = {
                     password: password
                 })
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -52,6 +55,7 @@ const request = {
                     params: { id: id }
                 })
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -64,6 +68,7 @@ const request = {
             axios
                 .get("/user")
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -80,6 +85,7 @@ const request = {
                     }
                 })
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -96,6 +102,7 @@ const request = {
                     old_password: old_password
                 })
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -113,6 +120,7 @@ const request = {
                     category: category
                 })
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -129,6 +137,7 @@ const request = {
                     }
                 })
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -137,7 +146,7 @@ const request = {
         });
     },
     productEdit: (id, name, description, price, category) => {
-        console.log(arguments)
+        console.log(arguments);
         return new Promise((resolve, reject) => {
             axios
                 .put("/product", {
@@ -148,6 +157,7 @@ const request = {
                     category: category
                 })
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -161,6 +171,7 @@ const request = {
             axios
                 .get("/product")
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -178,6 +189,7 @@ const request = {
                     }
                 })
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -196,6 +208,7 @@ const request = {
                     }
                 })
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -210,6 +223,7 @@ const request = {
                     products: products
                 })
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -222,6 +236,7 @@ const request = {
             axios
                 .get("/productlog")
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -239,6 +254,7 @@ const request = {
                     }
                 })
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -251,6 +267,7 @@ const request = {
             axios
                 .post("/count")
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {
@@ -263,6 +280,7 @@ const request = {
             axios
                 .get("/count")
                 .then(res => {
+                    console.log(res);
                     resolve(res);
                 })
                 .catch(e => {

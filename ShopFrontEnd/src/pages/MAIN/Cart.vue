@@ -3,8 +3,8 @@
     <h4 class="text-center non-selectable primary" v-if="!products||!products.length">购物车暂无商品</h4>
     <q-list class="row">
       <q-card
-        class="q-my-sm q-mx-md"
-        style="width:45%"
+        class="q-my-sm"
+        style="width:45%;margin-left:2.5%;margin-right:2.5%"
         v-for="(item,i) of products"
         :key="'product-'+i"
       >
@@ -64,7 +64,7 @@
     </q-list>
     <div
       class="row sum-area justify-end items-center bg-grey-3"
-      style="padding:0 5% 0 50%;width:100%;transform:translateX(-48px)"
+      style="padding:0 5% 0 50%;width:100%"
     >
       <div class="self-center non-selectable text-primary">总价：</div>
       <q-chip class="non-selectable" size="md" :label="sum"></q-chip>
@@ -141,10 +141,7 @@ export default {
 <style lang="sass" scoped>
 .cart-page
   height: calc(100vh - 50px - 48px)
-  padding-bottom: 50px
-  position: relative
 .sum-area
+  margin-top: 50px
   height: 50px
-  position: fixed
-  bottom: 48px
 </style>

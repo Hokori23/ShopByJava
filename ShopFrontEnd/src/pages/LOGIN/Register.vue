@@ -159,20 +159,21 @@ export default {
         try {
           let res = await this.$request.userRegister(
             this.info.account,
-            this.info.name.this.info.password
+            this.info.name,
+            this.info.password
           );
-          if (!res.errcode) {
+          if (!res.data.errcode) {
             console.log(res);
             this.$store.commit("Common/user", res.data.data);
             this.$router.push("/");
           } else {
             this.$q.dialog({
-              message: res.message
+              message: res.data.message
             });
           }
         } catch (e) {
           this.$q.dialog({
-            message: e
+            message: String(e)
           });
         }
       }
