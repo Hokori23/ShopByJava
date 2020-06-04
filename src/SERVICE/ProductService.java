@@ -97,6 +97,18 @@ public class ProductService {
         return obj;
     }
 
+    public List<Product> getAllProducts(Rest rest) throws Exception {
+        List<Product> products = new ArrayList<Product>();
+        try {
+            products = this.dao.getAllProducts(rest);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.conn.close();
+        }
+        return products;
+    }
+
     public List<Product> getProducts(int page, int opacity, String operaterID, Rest rest) throws Exception {
         List<Product> products = new ArrayList<Product>();
         try {

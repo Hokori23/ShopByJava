@@ -1,5 +1,6 @@
 package VO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -10,7 +11,7 @@ public class Rest extends JSONObject {
     }
 
     public void setErrcode(int errcode) {
-        this.put("errocode", errcode);
+        this.put("errcode", errcode);
     }
 
     public void setData(User obj) {
@@ -33,6 +34,10 @@ public class Rest extends JSONObject {
         this.put("data", obj);
     }
 
+    public void setDataArray(ArrayList obj) {
+        this.put("data", obj);
+    }
+
     public void setMessage(String message) {
         this.put("message", message);
     }
@@ -42,6 +47,7 @@ public class Rest extends JSONObject {
         this.setDataArray(obj);
         this.setMessage(message);
     }
+
 
     public void toRestObject(int errcode, User obj, String message) {
         this.setErrcode(errcode);
@@ -54,13 +60,6 @@ public class Rest extends JSONObject {
         this.setData(obj);
         this.setMessage(message);
     }
-
-    public void toRestObject(int errcode, ProductLog obj, String message) {
-        this.setErrcode(errcode);
-        this.setData(obj);
-        this.setMessage(message);
-    }
-
 
     public void toRestInt(int errcode, int count, String message) {
         this.setErrcode(errcode);

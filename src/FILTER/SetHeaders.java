@@ -16,6 +16,8 @@ public class SetHeaders implements javax.servlet.Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         httpResponse.setHeader("Access-Control-Allow-Origin", "*");
         httpResponse.setHeader("Access-Control-Allow-Methods", "*");
+        //Session 跨域
+        httpResponse.setHeader("Access-Control-Allow-Credentials","true");
         chain.doFilter(request, response);
     }
 

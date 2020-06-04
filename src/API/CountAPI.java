@@ -18,7 +18,7 @@ public class CountAPI extends HttpServlet {
         ServletContext context = request.getServletContext();
 
         Rest rest = new Rest();
-        int count = Integer.parseInt((String) context.getAttribute("count"));
+        int count = Integer.parseInt(context.getAttribute("count").toString());
 
         rest.toRestInt(0, count, "获取网站访问人数成功");
 
@@ -31,7 +31,7 @@ public class CountAPI extends HttpServlet {
         ServletContext context = request.getServletContext();
 
         Rest rest = new Rest();
-        int count = Integer.parseInt((String) context.getAttribute("count"));
+        int count = Integer.parseInt(context.getAttribute("count").toString());
         count++;
         context.setAttribute("count", count);
 

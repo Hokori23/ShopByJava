@@ -1,6 +1,7 @@
 package DAO;
 
 import VO.Product;
+import VO.Rest;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -92,20 +93,48 @@ public class ProductDAOImpl implements ProductDAO {
         return obj;
     }
 
+    @Override
+    public List<Product> getAllProducts(Rest rest) throws Exception {
+        List<Product> products = new ArrayList<Product>();
+        Product product = null;
+        String sql = "SELECT * FROM product";
+        try {
+            this.pstmt = this.conn.prepareStatement(sql);
+            ResultSet rs = this.pstmt.executeQuery();
+            while (rs.next()) {
+                product = new Product(0,"", "",0, rs.getString(5));
+                products.add(product);
+            }
+            rest.put("products", products);
+        } catch (Exception e) {
+            throw e;
+        }
+        sql = "SELECT COUNT(*) AS sum FROM product";
+        try {
+            this.pstmt = this.conn.prepareStatement(sql);
+            ResultSet rs = this.pstmt.executeQuery();
+            if (rs.next()) {
+                rest.put("sum", rs.getInt(1));
+            }
+        } catch (Exception e) {
+            throw e;
+        }
+        this.pstmt.close();
+        return products;
+    }
+
     // 查看某一页的商品信息
     @Override
     public List<Product> getProducts(int page, int capacity) throws Exception {
 
         int startLine = (page - 1) * capacity;
-        int endLine = startLine + capacity;
-
         List<Product> products = new ArrayList<Product>();
         Product product = null;
         String sql = "SELECT * FROM product LIMIT ? ,?";
         try {
             this.pstmt = this.conn.prepareStatement(sql);
             this.pstmt.setInt(1, startLine);
-            this.pstmt.setInt(2, endLine);
+            this.pstmt.setInt(2, capacity);
             ResultSet rs = this.pstmt.executeQuery();
             while (rs.next()) {
                 product = new Product(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5));

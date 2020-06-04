@@ -44,6 +44,33 @@ public class ProductLogDAOImpl implements ProductLogDAO {
 
     // 查看某段时间的购买记录
     @Override
+    public List<ProductLog> RetrieveAllProductLogs(String user_id) throws Exception {
+
+
+        List<ProductLog> productLogs = new ArrayList<ProductLog>();
+        ProductLog productLog = null;
+        String sql = "SELECT * FROM product_log_view WHERE user_id = ? ";
+        try {
+            this.pstmt = this.conn.prepareStatement(sql);
+            this.pstmt.setString(1, user_id);
+            ResultSet rs = this.pstmt.executeQuery();
+            while (rs.next()) {
+                for (int i = 1; i < 9; i++) {
+                    System.out.println(rs.getString(i));
+                }
+                productLog = new ProductLog(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getString(8));
+                productLogs.add(productLog);
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+            throw e;
+        }
+        this.pstmt.close();
+        return productLogs;
+    }
+
+    // 查看某段时间的购买记录
+    @Override
     public List<ProductLog> RetrieveProductLogs(String user_id, String start_time, String end_time) throws Exception {
 
 
@@ -57,7 +84,7 @@ public class ProductLogDAOImpl implements ProductLogDAO {
             this.pstmt.setString(3, end_time);
             ResultSet rs = this.pstmt.executeQuery();
             while (rs.next()) {
-                for(int i =1;i<9;i++){
+                for (int i = 1; i < 9; i++) {
                     System.out.println(rs.getString(i));
                 }
                 productLog = new ProductLog(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7), rs.getString(8));

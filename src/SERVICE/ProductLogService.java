@@ -23,6 +23,7 @@ public class ProductLogService implements ProductLogDAO {
         this.dao = new ProductLogDAOImpl(this.conn.getConnection());
     }
 
+
     @Override
     public boolean createProductLog(ProductLog productLog) throws Exception {
         boolean flag = false;
@@ -34,6 +35,19 @@ public class ProductLogService implements ProductLogDAO {
             this.conn.close();
         }
         return flag;
+    }
+
+    @Override
+    public List<ProductLog> RetrieveAllProductLogs(String user_id) throws Exception {
+        List<ProductLog> productLogs = new ArrayList<ProductLog>();
+        try {
+            productLogs = this.dao.RetrieveAllProductLogs(user_id);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.conn.close();
+        }
+        return productLogs;
     }
 
     @Override

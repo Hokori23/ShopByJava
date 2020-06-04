@@ -29,6 +29,7 @@ public class Counter implements ServletContextListener {
             reader.close();  // 把计数器对象保存到 Web 应用范围
 
             context.setAttribute("count", count);
+            System.out.println("count = "+count);
 
         } catch (IOException e) {
 

@@ -1,6 +1,7 @@
 package DAO;
 
 import VO.Product;
+import VO.Rest;
 
 import java.util.List;
 
@@ -13,6 +14,9 @@ public interface ProductDAO {
 
     //编辑商品
     public Product updateProduct(Product product) throws Exception;
+
+    //查看所有商品信息
+    public List<Product> getAllProducts(Rest rest) throws Exception;
 
     //查看某一页的商品信息
     public List<Product> getProducts(int page, int capacity) throws Exception;

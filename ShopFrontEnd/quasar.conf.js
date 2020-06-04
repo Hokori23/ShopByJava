@@ -44,7 +44,7 @@ module.exports = function(ctx) {
             directives: ["GoBack"],
 
             // Quasar plugins
-            plugins: ["Dialog"]
+            plugins: ["Dialog", "Notify"]
         },
 
         // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie
@@ -80,11 +80,11 @@ module.exports = function(ctx) {
             port: 8081,
             open: true, // opens browser window automatically
             proxy: {
-                "/api": {
+                "/project": {
                     target: "http://localhost:8080/project",
                     changeOrigin: true,
                     pathRewrite: {
-                        "^/api": ""
+                        "^/project": ""
                     }
                 }
             }

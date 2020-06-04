@@ -67,6 +67,7 @@
             class="q-mt-md"
             @click="login()"
           />
+          <div class="text-primary q-pt-md">{{$t('login.visitNum')}} : {{count}}</div>
         </div>
 
         <!-- 注册 -->
@@ -120,7 +121,8 @@ export default {
         account: this.$t("login.accountErr"),
         password: this.$t("login.passwordErr")
       },
-      lang: this.$q.lang.isoName
+      lang: this.$q.lang.isoName,
+      count: 0
     };
   },
   methods: {
@@ -139,15 +141,24 @@ export default {
       if (flag) {
         //Login.vue
         //登录请求
-        let res = await this.$request.userLogin(
-          this.info.account,
-          this.info.password
-        );
-        if (!res.errcode) {
-          console.log(res);
-          this.$router.push("/");
-        } else {
-          console.log(res.message);
+        try {
+          let res = await this.$request.userLogin(
+            this.info.account,
+            this.info.password
+          );
+          if (!res.errcode) {
+            console.log(res);
+            this.$store.commit("Common/user", res.data.data);
+            this.$router.push("/");
+          } else {
+            this.$q.dialog({
+              message: res.message
+            });
+          }
+        } catch (e) {
+          this.$q.dialog({
+            message: e
+          });
         }
       }
     },
@@ -170,12 +181,14 @@ export default {
       vm.$emit("header", false);
     });
   },
-  mounted() {
+  async mounted() {
     (function(vm) {
       setTimeout(() => {
         vm.init = true;
       }, 1500);
     })(this);
+    let res = await this.$request.countPlus();
+    this.count = res.data.data;
   }
 };
 </script>

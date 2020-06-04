@@ -1,52 +1,122 @@
 <template>
-  <section class="q-px-xl">
-    <h6>{{welcome}}</h6>
-    <div>
-      <!-- 昵称 -->
-      <q-input
-        bottom-slots
-        v-model="info.name"
-        :label="$t('login.nickName')"
-        :error-message="text.name"
-        ref="nameInput"
-        :error="!valid.name"
-        @focus="clear('name')"
-        @clear="clear('name')"
+  <section class="page">
+    <q-select
+      class="q-my-md q-px-xl"
+      v-model="nowCategory"
+      :options="category"
+      label="分类"
+      style="margin-left:auto;min-width:300px;  max-width:400px"
+    />
+    <q-list class="row q-px-xl">
+      <q-card
+        style="width:45%;margin:5% 2.5%"
+        v-for="(item,i) of currentProducts"
+        :key="'product-'+i"
       >
-        <template v-slot:prepend>
-          <q-icon name="chrome_reader_mode" />
-        </template>
-        <template v-slot:append>
-          <q-icon name="close" @click="info.name = ''" class="cursor-pointer" />
-        </template>
-      </q-input>
-      <!-- 密码 -->
-      <q-input
-        bottom-slots
-        v-model="info.password"
-        :label="$t('login.password')"
-        :error-message="text.password"
-        ref="passwordInput"
-        :error="!valid.password"
-        @focus="clear('password')"
-        @clear="clear('password')"
-      >
-        <template v-slot:prepend>
-          <q-icon name="lock" />
-        </template>
-        <template v-slot:append>
-          <q-icon name="close" @click="info.password = ''" class="cursor-pointer" />
-        </template>
-      </q-input>
-      <q-btn class="primary" @click="$router.push('/login')">返回登陆</q-btn>
-      <q-btn class="primary" @click="edit()">修改信息</q-btn>
-    </div>
-    <q-btn class='primary' @click="$router.push('/comment')">留言</q-btn>
+        <img src="statics/chicken-salad.jpg"/>
+
+        <q-list>
+          <q-item clickable>
+            <q-item-section avatar>
+              <q-icon color="primary" name="local_bar" />
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>{{item.name}}</q-item-label>
+              <q-item-label caption>{{item.description}}</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item clickable>
+            <q-item-section avatar>
+              <q-icon color="red" name="attach_money" />
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>价格</q-item-label>
+              <q-item-label caption>{{item.price}}</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item clickable>
+            <q-item-section avatar>
+              <q-icon color="amber" name="local_movies" />
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>分类</q-item-label>
+              <q-item-label caption>{{item.category}}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item clickable>
+            <q-item-section avatar>
+              <q-icon color="success" name="cart" />
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>添加购物车</q-item-label>
+              <q-item-label caption>
+                <q-btn round color="primary" size="xs" icon="remove" @click="reduce(item)" />
+                <q-chip outline color="primary" text-color="white" :label="item.count"></q-chip>
+                <q-btn round color="primary" size="xs" icon="add" @click="add(item)" />
+                <q-btn
+                  round
+                  color="primary"
+                  size="sm"
+                  icon="shopping_cart"
+                  @click="append(item)"
+                  class="q-ml-md"
+                />
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-card>
+    </q-list>
+    <q-pagination
+      v-model="currentPage"
+      color="purple"
+      :max="pageSum(nowCategory)"
+      :max-pages="6"
+      :boundary-numbers="true"
+    ></q-pagination>
   </section>
 </template>
 <script>
 export default {
   name: "home",
+  computed: {
+    category() {
+      let arr = [""];
+      this.productInfo &&
+        this.productInfo.products &&
+        this.productInfo.products.map(item => {
+          if (arr.indexOf(item.category) == -1) {
+            arr.push(item.category);
+          }
+        });
+      return arr;
+    },
+    pageSum() {
+      return val => {
+        let lastSum;
+        if (val) {
+          let sum = 0;
+          this.productInfo &&
+            this.productInfo.products &&
+            this.productInfo.products.map(item => {
+              if (item.category === val) {
+                sum++;
+              }
+            });
+          lastSum = sum;
+        } else {
+          lastSum = this.productInfo.sum;
+        }
+        return Math.ceil(lastSum / this.capacity);
+      };
+    }
+  },
   data() {
     return {
       welcome: "",
@@ -61,233 +131,137 @@ export default {
       text: {
         name: this.$t("login.nickNameErr"),
         password: this.$t("login.passwordErr")
-      }
+      },
+      productInfo: Object,
+      currentPage: 1,
+      capacity: 4,
+      currentProducts: [],
+      isCategory: false,
+      nowCategory: this.category && this.category.length && this.category[0]
     };
   },
   methods: {
-    edit() {
-      let flag = true;
-      if (!this.info.password) {
-        this.text.password = this.$t("login.passwordErr");
-        this.valid.password = false;
-        flag = false;
-      }
-      if (!this.info.name) {
-        this.text.name = this.$t("login.nickNameErr");
-        this.valid.name = false;
-        flag = false;
-      }
-      if (flag) {
-        this.$axios
-          .put("/user", {
-            id: sessionStorage.getItem("id"),
-            password: this.info.password,
-            name: this.info.name
-          })
-          .then(res => {
-            console.log(res);
-            this.$q.dialog({
-              message: res.data.message
-            });
-          })
-          .catch(e => {
-            this.$q.dialog({
-              message: e.message
-            });
-          });
-      }
+    append(item) {
+      this.$store.commit("MainLayout/appendCart", item);
+      this.$q.notify({
+        message:'添加成功',
+        timeout:250
+      });
     },
-    clear(value) {
-      this.valid[value] = true;
+    add(item) {
+      item.count++;
+    },
+    reduce(item) {
+      item.count > 1 ? item.count-- : false;
+    },
+    async productQueryInPage() {
+      console.log("query by page");
+      let res = await this.$request.productQueryInPage(
+        this.currentPage,
+        this.capacity
+      );
+      console.log(res.data);
+      if (res.data.errcode) {
+        this.$q
+          .dialog({
+            message: res.data.message
+          })
+          .onDismiss(() => {
+            if (res.data.errcode > 400) {
+              this.$router.push("/login");
+            }
+          });
+        return;
+      }
+      this.currentProducts = res.data.data;
+      this.currentProducts.map(item => {
+        this.$set(item, "count", 1);
+      });
+    },
+    async productQueryInPageAndCategory() {
+      console.log("query by page&category");
+      let res = await this.$request.productQueryInPageAndCategory(
+        this.currentPage,
+        this.capacity,
+        this.nowCategory
+      );
+
+      if (res.data.errcode) {
+        this.$q
+          .dialog({
+            message: res.data.message
+          })
+          .onDismiss(() => {
+            if (res.data.errcode > 400) {
+              this.$router.push("/login");
+            }
+          });
+        return;
+      }
+      this.currentProducts = res.data.data;
+      this.currentProducts.map(item => {
+        this.$set(item, "count", 1);
+      });
     }
   },
-      //Home.vue
-      beforeRouteEnter(to, from, next) {
-        //判断路由提供页面提示
-        next(vm => {
-          if (from.path.match("login")) {
-            vm.welcome = `登陆成功，${sessionStorage.getItem("name")}`;
-          } else if (from.path.match("register")) {
-            vm.back = true;
-            vm.welcome = `注册成功，${sessionStorage.getItem("name")}`;
-          }
+  watch: {
+    currentPage(val) {
+      console.log("currentPage", val, "isCategory", this.isCategory);
+      if (this.isCategory) {
+        this.productQueryInPageAndCategory();
+      } else {
+        this.productQueryInPage();
+      }
+    },
+    nowCategory(val) {
+      console.log("nowCategory", val);
+      if (val) {
+        this.isCategory = true;
+      } else {
+        this.isCategory = false;
+      }
+      if (this.isCategory) {
+        this.currentPage = 1;
+        this.productQueryInPageAndCategory();
+      } else {
+        this.currentPage = 1;
+        this.productQueryInPage();
+      }
+    },
+    isCategory(val) {
+      console.log("is category", val);
+    }
+  },
+  //Home.vue
+  beforeRouteEnter(to, from, next) {
+    //判断路由提供页面提示
+    next(async vm => {
+      let res = await vm.$request.productQueryAll();
+      if (!res.errcode) {
+        vm.productInfo = res.data;
+      } else {
+        vm.$q.dialog({
+          message: res.data.message
         });
-      },
-  mounted() {
-    //注册
-    // this.$axios
-    //   .post("/user", {
-    //     id: "test4",
-    //     name: "Hokori4",
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(e => {
-    //     console.log(e.message);
-    //   });
-    // //登录
-    // this.$axios
-    //   .get("/user", {
-    //     params: {
-    //       id: "524159845",
-    //       password: "bnm19990412"
-    //     }
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(e => {
-    //     console.log(e);
-    //   });
-    //查找
-    // this.$axios
-    //   .get("/user", {
-    //     params:{
-    //       id:'524159845'
-    //     }
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(e => {
-    //     console.log(e);
-    //   });
-    //删除
-    // this.$axios
-    //   .delete("/user", {
-    //     params: {
-    //       id: "123125"
-    //     }
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(e => {
-    //     console.log(e.message);
-    //   });
-    //改
-    // this.$axios
-    //   .put("/user", {
-    //       id: "524159845",
-    //       name:'Natsuya'
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(e => {
-    //     console.log(e);
-    //   });
-    //添加科目
-    // this.$axios({
-    //     url:'/subject',
-    //     method:'post',
-    //     data:{
-    //         name:'test',
-    //         type:'0'
-    //     }
-    // }).then(res=>{
-    //     console.log(res)
-    // }).catch(err=>{
-    //     console.log(err.message)
-    // })
-    // 删除科目
-    // this.$axios
-    //   .delete("/subject", {
-    //     params: {
-    //       name: "Chinese"
-    //     }
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(err => {
-    //     console.log(err.message);
-    //   });
-    //修改科目;
-    // this.$axios
-    //   .put("/subject", {
-    //       name: "test2",
-    //       type:0,
-    //       oldname:'test'
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(err => {
-    //     console.log(err.message);
-    //   });
-    // 查询科目;
-    // this.$axios
-    //   .get("/subject",{
-    //     params:{
-    //       name:'Math'
-    //     }
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(err => {
-    //     console.log(err)
-    //     console.log(err.message);
-    //   });
-    //添加作业
-    // let time = new Date();
-    // let dealTime = new Date(
-    //   time.getFullYear(),
-    //   time.getMonth(),
-    //   time.getDate()
-    // );
-    // this.$axios
-    //   .post("/assignment", {
-    //     name: "test",
-    //     info: "概率论作业",
-    //     deadLine: dealTime.getTime()
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     console.log(err.message);
-    //   });
-    //编辑作业
-    // this.$axios
-    //   .put("/assignment", {
-    //     name: "test",
-    //     info: "edit",
-    //     deadLine: dealTime.getTime()
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     console.log(err.message);
-    //   });
-    // this.$axios
-    //   .delete("/assignment", {
-    //     params: {
-    //       name: "test",
-    //       deadLine: dealTime.getTime()
-    //     }
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     console.log(err.message);
-    //   });
-    // this.$axios.get('/assignment',{
-    //   params:{
-    //     name:'概率论'
-    //   }
-    // }).then(res=>{
-    //   console.log(res)
-    // })
+      }
+      vm.productQueryInPage();
+    });
   }
 };
 </script>
-<style scoped>
+<style lang="sass" scoped>
+</style>
+<style lang="sass">
+.q-pagination
+  align-self: flex-end
+  bottom: 55px
+  width: 100%
+  div
+    margin: 0 auto
+
+.page
+  position: relative
+  display: flex
+  flex-direction: column
+  padding-bottom: 43px
 </style>

@@ -54,11 +54,11 @@ public class ProductLogAPI extends HttpServlet {
 //                String ProductsJSON = JSONObject.toJSONString(temProducts);
                 String ProductsJSON = temProducts.toString();
                 System.out.println(ProductsJSON);
-                ProductsJSON = ProductsJSON.replace("&quot;","\"");
+                ProductsJSON = ProductsJSON.replace("&quot;", "\"");
                 System.out.println(ProductsJSON);
                 ObjectMapper mapper = new ObjectMapper();
-                List<ProductLog> productLogs = mapper.readValue(ProductsJSON,  new TypeReference<List<ProductLog>>(){});
-
+                List<ProductLog> productLogs = mapper.readValue(ProductsJSON, new TypeReference<List<ProductLog>>() {
+                });
 
 
                 AtomicBoolean flag = new AtomicBoolean(true);
@@ -88,8 +88,8 @@ public class ProductLogAPI extends HttpServlet {
         /**
          * 查看某段时间的购买记录
          *
-         * @param String start_time
-         * @param String end_time
+         * @param String (start_time)
+         * @param String (end_time)
          *
          */
 
@@ -102,10 +102,11 @@ public class ProductLogAPI extends HttpServlet {
         // 判断参数进行业务逻辑处理
         Rest rest = new Rest();
         try {
-            if (startTime == null || startTime.isEmpty() || endTime == null || endTime.isEmpty()) {
-                rest.toRestMessage(1, "参数错误, {start_time, end_time}");
-            } else if (userID == null) {
+            if (userID == null) {
                 rest.toRestMessage(401, "请登录, Unauthorized");
+            } else if (startTime == null || startTime.isEmpty() || endTime == null || endTime.isEmpty()) {
+                List<ProductLog> productLogs = ProductLogFactory.getDAOInstance().RetrieveAllProductLogs(userID);
+                rest.toRestArray(0, productLogs, "查询购买记录成功");
             } else {
                 List<ProductLog> productLogs = ProductLogFactory.getDAOInstance().RetrieveProductLogs(userID, startTime, endTime);
                 rest.toRestArray(0, productLogs, "查询购买记录成功");

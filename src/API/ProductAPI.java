@@ -80,18 +80,25 @@ public class ProductAPI extends HttpServlet {
          * @param String (category)
          *
          */
-
-        // 获取数据
-        int page = Integer.parseInt(request.getParameter("page"));
-        int capacity = Integer.parseInt(request.getParameter("capacity"));
+        String pageStr = request.getParameter("page");
+        String capacityStr = request.getParameter("capacity");
         String category = request.getParameter("category");
-
+        System.out.println(pageStr + "------" + capacityStr);
         // 判断参数进行业务逻辑处理
         Rest rest = new Rest();
         try {
-            if (category == null || category.isEmpty()) {
+            if ((pageStr == null || pageStr.isEmpty()) && (capacityStr == null || capacityStr.isEmpty())) {
+                System.out.println("getAllProducts");
+                ProductFactory.getDAOInstance().getAllProducts(rest);
+            } else if (category == null || category.isEmpty()) {
+                System.out.println("getProducts");
+                int page = Integer.parseInt(pageStr);
+                int capacity = Integer.parseInt(capacityStr);
                 List<Product> products = ProductFactory.getDAOInstance().getProducts(page, capacity, (String) request.getSession().getAttribute("id"), rest);
             } else {
+                System.out.println("getProductsByCategory");
+                int page = Integer.parseInt(pageStr);
+                int capacity = Integer.parseInt(capacityStr);
                 List<Product> products = ProductFactory.getDAOInstance().getProductsByCategory(page, capacity, category, (String) request.getSession().getAttribute("id"), rest);
             }
         } catch (Exception e) {
@@ -160,9 +167,15 @@ public class ProductAPI extends HttpServlet {
             } else {
                 int id = Integer.parseInt(temId.toString());
                 String name = temName.toString();
-                String description = temDescription.toString();
+                String description = "";
+                if (temDescription != null) {
+                    description = temDescription.toString();
+                }
                 int price = Integer.parseInt(temPrice.toString());
-                String category = temCategory.toString();
+                String category = "";
+                if (temCategory != null) {
+                    category = temCategory.toString();
+                }
                 Product product = new Product(id, name, description, price, category);
                 ProductFactory.getDAOInstance().updateProduct(product, (String) request.getSession().getAttribute("id"), rest);
             }

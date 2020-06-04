@@ -133,7 +133,7 @@ export default {
     clear(value) {
       this.valid[value] = true;
     },
-    next() {
+    async next() {
       if (this.step === 1) {
         let flag = true;
         if (!this.info.account) {
@@ -155,31 +155,26 @@ export default {
           this.$refs.stepper.next();
         }
       } else if (this.step === 2) {
-      //Register.vue
-      this.$axios
-        .post("/user", {
-          id: this.info.account,
-          password: this.info.password,
-          name: this.info.name
-        })
-        .then(res => {
-          console.log(res);
-          if (res.data.errcode) {
-            this.$q.dialog({
-              message: res.data.message
-            });
-          } else {
-            sessionStorage.setItem("login", "1");
-            sessionStorage.setItem("name", res.data.data.name);
-            sessionStorage.setItem("id", res.data.data.id);
+        //Register.vue
+        try {
+          let res = await this.$request.userRegister(
+            this.info.account,
+            this.info.name.this.info.password
+          );
+          if (!res.errcode) {
+            console.log(res);
+            this.$store.commit("Common/user", res.data.data);
             this.$router.push("/");
-          }
-        })
-          .catch(e => {
+          } else {
             this.$q.dialog({
-              message: e.message
+              message: res.message
             });
+          }
+        } catch (e) {
+          this.$q.dialog({
+            message: e
           });
+        }
       }
     }
   },

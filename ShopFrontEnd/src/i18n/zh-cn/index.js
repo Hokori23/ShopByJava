@@ -24,7 +24,8 @@ export default {
         checkCode: '验证码',
         checkCodeErr: '验证码不能为空',
         resend: '重发',
-        send: '发送'
+        send: '发送',
+        visitNum: '网站访问数量'
     },
     common: {
         confirm: '确定',

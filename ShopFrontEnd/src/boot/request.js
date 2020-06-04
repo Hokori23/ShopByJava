@@ -17,6 +17,18 @@ const request = {
                 });
         });
     },
+    userLogOut: () => {
+        return new Promise((resolve, reject) => {
+            axios
+                .get("/user/logout")
+                .then(res => {
+                    resolve(res);
+                })
+                .catch(e => {
+                    reject(e);
+                });
+        });
+    },
     userRegister: (id, name, password) => {
         return new Promise((resolve, reject) => {
             axios
@@ -108,11 +120,13 @@ const request = {
                 });
         });
     },
-    productDelete: id => {
+    productRemove: id => {
         return new Promise((resolve, reject) => {
             axios
                 .delete("/product", {
-                    id: id
+                    params: {
+                        id: id
+                    }
                 })
                 .then(res => {
                     resolve(res);
@@ -123,6 +137,7 @@ const request = {
         });
     },
     productEdit: (id, name, description, price, category) => {
+        console.log(arguments)
         return new Promise((resolve, reject) => {
             axios
                 .put("/product", {
@@ -140,12 +155,27 @@ const request = {
                 });
         });
     },
+    productQueryAll: () => {
+        console.log("queryAll");
+        return new Promise((resolve, reject) => {
+            axios
+                .get("/product")
+                .then(res => {
+                    resolve(res);
+                })
+                .catch(e => {
+                    reject(e);
+                });
+        });
+    },
     productQueryInPage: (page, capacity) => {
         return new Promise((resolve, reject) => {
             axios
                 .get("/product", {
-                    page: page,
-                    capacity: capacity
+                    params: {
+                        page: page,
+                        capacity: capacity
+                    }
                 })
                 .then(res => {
                     resolve(res);
@@ -159,9 +189,11 @@ const request = {
         return new Promise((resolve, reject) => {
             axios
                 .get("/product", {
-                    page: page,
-                    capacity: capacity,
-                    category: category
+                    params: {
+                        page: page,
+                        capacity: capacity,
+                        category: category
+                    }
                 })
                 .then(res => {
                     resolve(res);
@@ -185,12 +217,26 @@ const request = {
                 });
         });
     },
+    productLogQueryAll: () => {
+        return new Promise((resolve, reject) => {
+            axios
+                .get("/productlog")
+                .then(res => {
+                    resolve(res);
+                })
+                .catch(e => {
+                    reject(e);
+                });
+        });
+    },
     productLogQuery: (start_time, end_time) => {
         return new Promise((resolve, reject) => {
             axios
                 .get("/productlog", {
-                    start_time: start_time,
-                    end_time: end_time
+                    params: {
+                        start_time: start_time,
+                        end_time: end_time
+                    }
                 })
                 .then(res => {
                     resolve(res);
@@ -223,6 +269,22 @@ const request = {
                     reject(e);
                 });
         });
+    },
+    dealErr: (res, vm) => {
+        let flag = true;
+        if (res.data.errcode) {
+            flag = false;
+            vm.$q
+                .dialog({
+                    message: res.data.message
+                })
+                .onDismiss(() => {
+                    if (res.data.errcode == 401) {
+                        vm.$router.push("/login");
+                    }
+                });
+        }
+        return flag;
     }
 };
 Vue.prototype.$request = request;

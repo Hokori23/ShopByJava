@@ -24,7 +24,8 @@ export default {
         checkCode: 'Verification Code',
         checkCodeErr: 'Verification code required',
         resend: 'Retry',
-        send: 'Send'
+        send: 'Send',
+        visitNum: 'The Number of site vistors'
     },
     common: {
         confirm: 'Confirm',
