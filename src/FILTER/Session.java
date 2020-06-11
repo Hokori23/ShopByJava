@@ -26,6 +26,7 @@ public class Session implements Filter {
             session.setMaxInactiveInterval(60 * 60 * 24 * 7);
         } else if (httpRequest.getServletPath().equals("/user") && httpRequest.getMethod().equals("POST")) {
             //7天有效期
+            System.out.println("/user POST Session Filter");
             session.setMaxInactiveInterval(60 * 60 * 24 * 7);
         } else {
             try {

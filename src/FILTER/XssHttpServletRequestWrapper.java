@@ -31,7 +31,6 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
         String str = "";
         String body = "";
         while ((str = reader.readLine()) != null) {// 一行一行的读取body体里面的内容；
-            str = xssEncode(str);
             body += str;
         }
         return new XssJSONObject(JSONObject.parseObject(body));
